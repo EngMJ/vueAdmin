@@ -5,9 +5,9 @@
       :show-timeout="200"
       :default-active="$route.path"
       :collapse="isCollapse"
-      background-color="#242C3E"
-      text-color="#bfcbd9"
-      active-text-color="#409EFF"
+      text-color="#91949D"
+      active-text-color="#02B7DF"
+      class="sidebar-menu"
     >
       <div class="logo-wrapper">
         <img src="../../../../assets/img/logo.png" alt="富森LOGO" class="logo">
@@ -44,5 +44,8 @@ export default {
       width: 208px;
       height: 69px;
     }
+  }
+  .sidebar-menu{
+    background: #242C3E;
   }
 </style>

@@ -62,6 +62,34 @@
        overflow: hidden;
      }
    }
+    /*侧边栏下拉item*/
+    .el-submenu {
+      .el-submenu__title {
+        &:hover {
+          background: #253A55;
+        }
+      }
+      .submenu-item{
+        background-color: #1c1c1f;
+        &:hover{
+          background: #253A55;
+        }
+        &.is-active{
+          border-left: 2px solid #02B7DF;
+          background: #253A55;
+        }
+      }
+    }
+    /*侧边栏item*/
+   .submenu-title-noDropdown{
+     &.is-active{
+       background: #253A55;
+       border-left: 2px solid #02B7DF;
+     }
+     &:hover{
+       background: #253A55;
+     }
+   }
   }
   .hideSidebar {
     .sidebar-container {
@@ -110,7 +138,6 @@
   .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
     min-width: 208px !important;
-    background-color: $subMenuBg !important;
     &:hover {
       background-color: $menuHover !important;
     }
