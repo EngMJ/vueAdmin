@@ -68,6 +68,9 @@ export default {
     },
     moveToCurrentTag() {
       const tags = this.$refs.tag
+      if (!tags) {
+        return
+      }
       this.$nextTick(() => {
         for (const tag of tags) {
           if (tag.to === this.$route.path) {

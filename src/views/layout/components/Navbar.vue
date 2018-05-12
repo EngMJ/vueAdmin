@@ -220,7 +220,7 @@ export default {
     }
   }
 }
-@media screen and (max-width: 1270px){
+@media screen and (max-width: 1370px){
   .loginTime,.msg {
     display: none !important;
   }
