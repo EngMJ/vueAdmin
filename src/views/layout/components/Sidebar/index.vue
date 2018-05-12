@@ -5,10 +5,13 @@
       :show-timeout="200"
       :default-active="$route.path"
       :collapse="isCollapse"
-      background-color="#304156"
+      background-color="#242C3E"
       text-color="#bfcbd9"
       active-text-color="#409EFF"
     >
+      <div class="logo-wrapper">
+        <img src="../../../../assets/img/logo.png" alt="富森LOGO" class="logo">
+      </div>
       <sidebar-item :routes="routes"></sidebar-item>
     </el-menu>
   </el-scrollbar>
@@ -33,3 +36,13 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+  .logo-wrapper{
+    width: 100%;
+    .logo{
+      transition: all .5s linear;
+      width: 208px;
+      height: 69px;
+    }
+  }
+</style>

@@ -42,7 +42,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/example/table',
     name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    meta: { title: '全程供应链', icon: 'menu' },
     children: [
       {
         path: 'table',
@@ -60,14 +60,98 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/form',
+    path: '/index',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/index/index'),
+        meta: { title: '主页', icon: 'home' }
+      }
+    ]
+  },
+  {
+    path: '/flow',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'flow',
+        component: () => import('@/views/flow/index'),
+        meta: { title: '整体流程', icon: 'flow' }
+      }
+    ]
+  },
+  {
+    path: '/orderSearch',
     component: Layout,
     children: [
       {
         path: 'index',
         name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        component: () => import('@/views/orderSearch/index'),
+        meta: { title: '订单查询', icon: 'search' }
+      }
+    ]
+  },
+  {
+    path: '/orderPay',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'orderFrom',
+        component: () => import('@/views/orderPay/index'),
+        meta: { title: '订单下单', icon: 'orderFrom' }
+      }
+    ]
+  },
+  {
+    path: '/inventorySearch',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'repertorySearch',
+        component: () => import('@/views/inventorySearch/index'),
+        meta: { title: '库存查询', icon: 'repertory' }
+      }
+    ]
+  },
+  {
+    path: '/logistics',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'logistics',
+        component: () => import('@/views/logistics/index'),
+        meta: { title: '物流派单', icon: 'logistics' }
+      }
+    ]
+  },
+  {
+    path: '/pay',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'payRequest',
+        component: () => import('@/views/pay/index'),
+        meta: { title: '付款申请', icon: 'pay' }
+      }
+    ]
+  },
+  {
+    path: '/setiing',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'setting',
+        component: () => import('@/views/setiing/index'),
+        meta: { title: '设置管理', icon: 'setting' }
       }
     ]
   },

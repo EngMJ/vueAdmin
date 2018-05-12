@@ -3,12 +3,12 @@
   .main-container {
     min-height: 100%;
     transition: margin-left .28s;
-    margin-left: 180px;
+    margin-left: 208px;
   }
   // 侧边栏
   .sidebar-container {
     transition: width 0.28s;
-    width: 180px !important;
+    width: 208px !important;
     height: 100%;
     position: fixed;
     font-size: 0px;
@@ -43,13 +43,32 @@
       height: 100%;
       width: 100% !important;
     }
+    .el-menu-item{
+      height: 70px;
+      line-height: 70px;
+      font-size: 17px;
+      color: #A0A0A6;
+    }
+    /*子项,图标及字体*/
+   .el-menu--inline{
+     .el-menu-item{
+       font-size: 15px;
+     }
+     .svg-icon{
+       width: 1.6em;
+       height: 1.6em;
+       vertical-align: -0.5em;
+       fill: currentColor;
+       overflow: hidden;
+     }
+   }
   }
   .hideSidebar {
     .sidebar-container {
-      width: 36px !important;
+      width: 65px !important;
     }
     .main-container {
-      margin-left: 36px;
+      margin-left: 65px;
     }
     .submenu-title-noDropdown {
       padding-left: 10px !important;
@@ -58,10 +77,11 @@
         padding: 0 10px !important;
       }
     }
+    /*隐藏时有下拉的选项*/
     .el-submenu {
       overflow: hidden;
       &>.el-submenu__title {
-        padding-left: 10px !important;
+        padding-left: 15px !important;
         .el-submenu__icon-arrow {
           display: none;
         }
@@ -80,17 +100,23 @@
         }
       }
     }
+    .logo-wrapper{
+      .logo{
+        opacity: 0;
+        width: 0;
+      }
+    }
   }
   .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
-    min-width: 180px !important;
+    min-width: 208px !important;
     background-color: $subMenuBg !important;
     &:hover {
       background-color: $menuHover !important;
     }
   }
   .el-menu--collapse .el-menu .el-submenu {
-    min-width: 180px !important;
+    min-width: 208px !important;
   }
 
   //适配移动端
@@ -100,12 +126,12 @@
     }
     .sidebar-container {
       transition: transform .28s;
-      width: 180px !important;
+      width: 208px !important;
     }
     &.hideSidebar {
       .sidebar-container {
         transition-duration: 0.3s;
-        transform: translate3d(-180px, 0, 0);
+        transform: translate3d(-208px, 0, 0);
       }
     }
   }
