@@ -1,4 +1,17 @@
+/* 改变主题色变量 */
+$--color-primary: #00A4D7;
 //sidebar
 $menuBg:#253A55;
 $subMenuBg: #1c1c1f;
 $menuHover:#253A55;
+/*改变背景及hover基本颜色*/
+$--background-color-base: #a7c9d7;
+/*改变table颜色*/
+$--table-border-color: #D4D4D4;
+$--table-row-hover-background: #D3E9F0;
+$--table-current-row-background: #a7c9d7;
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
