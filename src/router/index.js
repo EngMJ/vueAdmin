@@ -45,28 +45,28 @@ export const constantRouterMap = [
     meta: { title: '全程供应链', icon: 'menu' },
     children: [
       {
-        path: 'table',
+        path: 'supplyChain',
         name: 'Table',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/supplyChain/index'),
         meta: { title: '全程供应链', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '进口业务', icon: 'tree' }
+        path: 'import',
+        name: 'import',
+        component: () => import('@/views/import/index'),
+        meta: { title: '进口业务', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '出口业务', icon: 'tree' }
+        path: 'export',
+        name: 'export',
+        component: () => import('@/views/export/index'),
+        meta: { title: '出口业务', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '代采业务', icon: 'tree' }
+        path: 'agency',
+        name: 'agency',
+        component: () => import('@/views/agency/index'),
+        meta: { title: '代采业务', icon: 'table' }
       }
     ]
   },
