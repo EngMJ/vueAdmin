@@ -109,7 +109,12 @@
               </el-upload>
             </div>
             <div v-else class="highText">
-              订单确认书.doc
+              <span>
+                订单确认书.doc
+              </span>
+              <span style="color: red;" @click="showUploadSuccess = !showUploadSuccess">
+                删除
+              </span>
             </div>
           </template>
         </el-table-column>
@@ -151,26 +156,6 @@
           region: ''
         },
         tableData: [
-          {
-            sellNumber: 987666,
-            date: '2018-02-15',
-            orderState: '待受理',
-            company: '深圳市腾讯有限公司',
-            logisticsState: '深圳发货',
-            totalPrice: '10000 USD',
-            remark: '',
-            orderAffirm: '订单确认书.doc'
-          },
-          {
-            sellNumber: 987666,
-            date: '2018-02-15',
-            orderState: '待受理',
-            company: '深圳市腾讯有限公司',
-            logisticsState: '深圳发货',
-            totalPrice: '10000 USD',
-            remark: '',
-            orderAffirm: '订单确认书.doc'
-          },
           {
             sellNumber: 987666,
             date: '2018-02-15',
