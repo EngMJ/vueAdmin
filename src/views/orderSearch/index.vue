@@ -26,6 +26,7 @@
         <el-button size="small">全选</el-button>
         <el-button size="small">取消选择</el-button>
         <el-button size="small" type="danger">批量删除</el-button>
+        <el-button size="small" type="primary" @click="$router.push('/orderPay/index')">新增订单</el-button>
       </div>
       <el-table
         ref="singleTable"
@@ -49,7 +50,7 @@
           align="center"
           label="采购单号">
           <template slot-scope="prop">
-            <div @click="showOrderDetail=!showOrderDetail" class="orderNumber">
+            <div @click="showOrderDetail=!showOrderDetail" class="highText">
               {{prop.row.sellNumber}}
             </div>
           </template>
@@ -73,7 +74,7 @@
           align="center"
           label="物流状态">
           <template slot-scope="prop">
-            <div class="orderNumber">
+            <div class="highText">
               {{prop.row.logisticsState}}
             </div>
           </template>
@@ -85,7 +86,7 @@
         </el-table-column>
         <el-table-column
           align="center"
-          width="400px"
+          width="500px"
           label="备注" class-name="remark-wrapper">
           <template slot-scope="prop">
             <el-input type="textarea"
@@ -96,10 +97,19 @@
         </el-table-column>
         <el-table-column
           align="center"
+          width="200px"
           label="订单确认">
           <template slot-scope="prop">
-            <div class="orderNumber">
-              {{prop.row.orderAffirm}}
+            <div v-if="showUploadSuccess" class="highText confirmation">
+              <a href="#" download="模板" :class="{hidden:false}">订单确认书模板</a>
+              <el-upload action="https://jsonplaceholder.typicode.com/posts/"
+                         style="display: inline-block;margin-left: 5px"
+                         :on-success="showSuccess">
+                <span :class="{hidden:hiddenState}">上传</span>
+              </el-upload>
+            </div>
+            <div v-else class="highText">
+              订单确认书.doc
             </div>
           </template>
         </el-table-column>
@@ -108,7 +118,7 @@
           label="操作">
           <template slot-scope="prop">
             <el-button type="primary" size="small">查看</el-button>
-            <el-button type="danger" size="small">删除</el-button>
+            <el-button type="danger" size="small" style="margin: 0">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -132,6 +142,7 @@
 
 <script>
   import bottomTab from '@/components/bottomFeedbackTab'
+  // import Vue from 'vue'
   export default {
     data() {
       return {
@@ -240,7 +251,9 @@
           ]
         },
         value7: '',
-        radio: '1'
+        radio: '1',
+        showUploadSuccess: true,
+        hiddenState: false
       }
     },
     methods: {
@@ -249,6 +262,13 @@
       },
       handleCurrentChange(val) {
         this.currentRow = val
+      },
+      showSuccess() {
+        console.log('成功')
+        this.showUploadSuccess = !this.showUploadSuccess
+      },
+      hiddenHandle() {
+        this.hiddenState = true
       }
     },
     components: {
@@ -283,9 +303,12 @@
       display: inline-block;
     }
   }
-  .orderNumber{
+  .highText{
     color: #02B7DF;
     cursor: pointer;
+    .hidden{
+      display: none;
+    }
   }
   .tableContent{
   }

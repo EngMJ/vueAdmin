@@ -16,7 +16,14 @@
                  size="small"
                  class="form-content">
           <el-form-item label="供应商" class="formItem">
-            <el-input v-model="formData.supplier" class="inputBox"></el-input>
+            <el-select v-model="formData.companyValue" placeholder="请选择" class="inputBox">
+              <el-option
+                v-for="item in supplierOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="币种类型" class="formItem">
             <el-select v-model="formData.selectValue" placeholder="请选择" class="inputBox">
@@ -133,9 +140,9 @@
         </div>
       </el-col>
       <el-col class="submit-wrapper">
-        <el-button type="info">返回</el-button>
-        <el-button type="primary">保存</el-button>
-        <el-button style="background: #42B983;color: #fff;">提交</el-button>
+        <el-button type="info" @click="$router.push('/orderSearch/index')">返回</el-button>
+        <el-button type="primary" @click="saveHandle">保存</el-button>
+        <el-button style="background: #42B983;color: #fff;" @click="submitHandle">提交</el-button>
       </el-col>
     </el-row>
     <bottomTab></bottomTab>
@@ -152,9 +159,9 @@
             sellName: 'LED灯',
             modelNumber: 'SR',
             unit: '个',
-            unitPrice: 10,
-            Number: 1000,
-            totalPrice: 10000,
+            unitPrice: 20,
+            Number: 2000,
+            totalPrice: 20000,
             brand: '飞利浦',
             productionAddress: '深圳'
           },
@@ -173,8 +180,8 @@
             modelNumber: 'SR',
             unit: '个',
             unitPrice: 10,
-            Number: 1000,
-            totalPrice: 10000,
+            Number: 1200,
+            totalPrice: 12000,
             brand: '飞利浦',
             productionAddress: '深圳'
           }
@@ -182,16 +189,31 @@
         options: [
           {
             value: '选项1',
-            label: '黄金糕'
+            label: 'RMB'
           },
           {
             value: '选项2',
-            label: '双皮奶'
+            label: 'USD'
+          }
+        ],
+        supplierOptions: [
+          {
+            value: '选项1',
+            label: '深圳市大创科技有限公司'
+          },
+          {
+            value: '选项2',
+            label: '深圳市腾讯科技有限公司'
+          },
+          {
+            value: '选项3',
+            label: '深圳市顺丰科技有限公司'
           }
         ],
         formData: {
           supplier: '',
           input: '',
+          companyValue: '',
           selectValue: '',
           radio: 1
         },
@@ -220,6 +242,20 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${file.name}？`)
+      },
+      saveHandle() {
+        this.$notify({
+          title: '保存成功',
+          message: '该订单已保存',
+          type: 'success'
+        })
+      },
+      submitHandle() {
+        this.$notify({
+          title: '提交成功',
+          message: '该订单已提交',
+          type: 'success'
+        })
       }
     },
     components: {
@@ -250,8 +286,9 @@
       font-size: 15px;
     }
     .tagContent{
+      display: flex;
+      justify-content: flex-start;
       .tagItem{
-        display: inline-block;
         width: 134px;
         height: 40px;
         line-height: 40px;
