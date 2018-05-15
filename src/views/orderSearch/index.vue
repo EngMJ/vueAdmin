@@ -1,7 +1,7 @@
 <template>
     <div class="container-wrapper">
       <el-form :inline="true" :model="formInline" size="medium" class="form-content">
-        <el-form-item>
+        <el-form-item label="订单日期:">
           <div class="block">
             <el-date-picker
               v-model="value7"
@@ -11,7 +11,8 @@
               range-separator="~"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              :picker-options="pickerOptions2" class="pickerButton">
+              :picker-options="pickerOptions2"
+              class="pickerButton">
             </el-date-picker>
           </div>
         </el-form-item>
@@ -29,7 +30,6 @@
       <el-table
         ref="singleTable"
         :data="tableData"
-        highlight-current-row
         @current-change="handleCurrentChange"
         class="tableContent"
         header-row-class-name="tabHead"
@@ -40,54 +40,68 @@
           width="55">
         </el-table-column>
         <el-table-column
+          type="index"
           label="序号"
           align="center"
-          width="60px"
-          type="index">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          property="company"
-          label="公司名称">
+          width="60">
         </el-table-column>
         <el-table-column
           align="center"
           label="采购单号">
           <template slot-scope="prop">
             <div @click="showOrderDetail=!showOrderDetail" class="orderNumber">
-              {{prop.row.orderNumber}}
+              {{prop.row.sellNumber}}
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          property="GCODE"
-          align="center"
-          label="GCODE">
-        </el-table-column>
-        <el-table-column
-          align="center"
           property="date"
+          align="center"
           label="订单日期">
         </el-table-column>
         <el-table-column
+          property="orderState"
           align="center"
+          label="订单状态">
+        </el-table-column>
+        <el-table-column
+          property="company"
+          align="center"
+          label="供应商">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="物流状态">
+          <template slot-scope="prop">
+            <div class="orderNumber">
+              {{prop.row.logisticsState}}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
           property="totalPrice"
-          label="总价">
+          align="center"
+          label="订单金额">
         </el-table-column>
         <el-table-column
           align="center"
-          property="currency"
-          label="币种">
+          width="400px"
+          label="备注" class-name="remark-wrapper">
+          <template slot-scope="prop">
+            <el-input type="textarea"
+                      v-model="prop.row.remark"
+                      autosize
+                      data-textreaStyle></el-input>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
-          property="state"
-          label="状态">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          property="submitState"
-          label="是否提交采购单">
+          label="订单确认">
+          <template slot-scope="prop">
+            <div class="orderNumber">
+              {{prop.row.orderAffirm}}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -127,54 +141,34 @@
         },
         tableData: [
           {
-            company: '深圳市联合影像有限公司',
-            orderNumber: 'LH1234567',
-            GCODE: 'G0987',
-            date: '2016-05-02',
-            totalPrice: 117868.13,
-            currency: 'RMB',
-            state: '审核',
-            submitState: '否'
+            sellNumber: 987666,
+            date: '2018-02-15',
+            orderState: '待受理',
+            company: '深圳市腾讯有限公司',
+            logisticsState: '深圳发货',
+            totalPrice: '10000 USD',
+            remark: '',
+            orderAffirm: '订单确认书.doc'
           },
           {
-            company: '深圳市联合影像有限公司',
-            orderNumber: 'LH1234567',
-            GCODE: 'G0987',
-            date: '2016-05-02',
-            totalPrice: 117868.13,
-            currency: 'RMB',
-            state: '审核',
-            submitState: '是'
+            sellNumber: 987666,
+            date: '2018-02-15',
+            orderState: '待受理',
+            company: '深圳市腾讯有限公司',
+            logisticsState: '深圳发货',
+            totalPrice: '10000 USD',
+            remark: '',
+            orderAffirm: '订单确认书.doc'
           },
           {
-            company: '深圳市联合影像有限公司',
-            orderNumber: 'LH1234567',
-            GCODE: 'G0987',
-            date: '2016-05-02',
-            totalPrice: 117868.13,
-            currency: 'RMB',
-            state: '审核',
-            submitState: '是'
-          },
-          {
-            company: '深圳市联合影像有限公司',
-            orderNumber: 'LH1234567',
-            GCODE: 'G0987',
-            date: '2016-05-02',
-            totalPrice: 117868.13,
-            currency: 'RMB',
-            state: '审核',
-            submitState: '是'
-          },
-          {
-            company: '深圳市联合影像有限公司',
-            orderNumber: 'LH1234567',
-            GCODE: 'G0987',
-            date: '2016-05-02',
-            totalPrice: 117868.13,
-            currency: 'RMB',
-            state: '审核',
-            submitState: '是'
+            sellNumber: 987666,
+            date: '2018-02-15',
+            orderState: '待受理',
+            company: '深圳市腾讯有限公司',
+            logisticsState: '深圳发货',
+            totalPrice: '10000 USD',
+            remark: '',
+            orderAffirm: '订单确认书.doc'
           }
         ],
         currentRow: null,
@@ -300,9 +294,21 @@
 
 <style lang="scss">
   .tableContent{
+    /*table中标题样式*/
     .tabHead{
       th{
         background-color: #ECECEC;
+      }
+    }
+    /*table中备注样式*/
+    .remark-wrapper{
+      padding: 0;
+      .cell{
+        padding: 0;
+        textarea[data-textreaStyle]{
+          height: 100% !important;
+          border: none;
+        }
       }
     }
   }
