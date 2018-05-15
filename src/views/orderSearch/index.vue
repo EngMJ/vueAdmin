@@ -91,7 +91,7 @@
           <template slot-scope="prop">
             <el-input type="textarea"
                       v-model="prop.row.remark"
-                      autosize
+                      :autosize="{ minRows: 3}"
                       data-textreaStyle></el-input>
           </template>
         </el-table-column>
@@ -310,7 +310,7 @@
     }
     /*table中备注样式*/
     .remark-wrapper{
-      padding: 0;
+      padding: 0 !important;
       .cell{
         padding: 0;
         textarea[data-textreaStyle]{
