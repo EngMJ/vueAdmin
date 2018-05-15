@@ -1,13 +1,4 @@
 <template>
-  <!--页面设计所需控件-->
-  <!--el-row el-col-->
-  <!--el-form 行内-->
-  <!--单选框 时间选择器 输入框 button 下拉框/下拉菜单-->
-  <!--taber-->
-  <!--dialog/messge-box 嵌套表格-->
-  <!--路由跳转 二级页面-->
-  <!--进度条-->
-  <!--taber-->
     <div class="container-wrapper">
       <el-form :inline="true" :model="formInline" size="medium" class="form-content">
         <el-form-item>
@@ -121,10 +112,12 @@
           <el-table-column property="productionAddress" label="产地"></el-table-column>
         </el-table>
       </el-dialog>
+      <bottomTab></bottomTab>
     </div>
 </template>
 
 <script>
+  import bottomTab from '@/components/bottomFeedbackTab'
   export default {
     data() {
       return {
@@ -263,6 +256,9 @@
       handleCurrentChange(val) {
         this.currentRow = val
       }
+    },
+    components: {
+      bottomTab
     }
   }
 </script>
@@ -270,8 +266,10 @@
 <style scoped lang="scss">
 .container-wrapper{
   box-sizing: border-box;
+  position: relative;
   width: 100%;
-  padding: 15px 0 0 20px;
+  padding: 15px 0 90px 20px;
+  min-height: 794px;
   .form-content{
     display: flex;
     justify-content: space-between;
