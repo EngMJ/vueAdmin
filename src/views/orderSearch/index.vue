@@ -74,7 +74,7 @@
           align="center"
           label="物流状态">
           <template slot-scope="prop">
-            <div class="highText">
+            <div class="highText" @click="$router.push({path:'/logistics/index',query:{key:123}})">
               {{prop.row.logisticsState}}
             </div>
           </template>
@@ -147,7 +147,6 @@
 
 <script>
   import bottomTab from '@/components/bottomFeedbackTab'
-  // import Vue from 'vue'
   export default {
     data() {
       return {
@@ -258,6 +257,25 @@
     },
     components: {
       bottomTab
+    },
+    created() {
+      this.$http({
+        url: '/mock/orderSearch',
+        method: 'post',
+        data: {
+          key: '我的mock数据'
+        }
+      }).then((res) => {
+        console.log(res)
+      })
+      this.$http.get('/mock/getData', {
+        params: {
+          key: 123,
+          key1: 232
+        }
+      }).then((res) => {
+        console.log(res)
+      })
     }
   }
 </script>

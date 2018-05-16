@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import axios from 'axios'
+Vue.prototype.$http = axios
 
 import 'normalize.css/normalize.css'// A modern alternative to CSS resets
 
@@ -14,6 +16,8 @@ import store from './store'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+
+import './mock'
 
 Vue.use(ElementUI, { locale })
 
