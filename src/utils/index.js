@@ -11,7 +11,9 @@ export function parseTime(time, cFormat) {
   if (typeof time === 'object') {
     date = time
   } else {
-    if (('' + time).length === 10) time = parseInt(time) * 1000
+    if (typeof time === 'number' && ('' + time).length === 10) {
+      time = parseInt(time) * 1000
+    }
     date = new Date(time)
   }
   const formatObj = {
@@ -35,7 +37,9 @@ export function parseTime(time, cFormat) {
 }
 
 export function formatTime(time, option) {
-  time = +time * 1000
+  if (typeof time !== 'string') {
+    time = +time * 1000
+  }
   const d = new Date(time)
   const now = Date.now()
 

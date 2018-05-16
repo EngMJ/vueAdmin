@@ -29,7 +29,7 @@ export const constantRouterMap = [
     path: '/',
     component: Layout,
     redirect: '/index',
-    name: 'index',
+    name: 'indexRedirect',
     hidden: true,
     children: [{
       path: 'index',
@@ -113,9 +113,9 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'orderFrom',
+        name: 'orderForm',
         component: () => import('@/views/orderPay/index'),
-        meta: { title: '订单下单', icon: 'orderFrom' }
+        meta: { title: '订单下单', icon: 'orderForm' }
       }
     ]
   },
