@@ -163,29 +163,29 @@
           region: ''
         },
         orderListData: [
-          {
-            fusenOrder: 987666,
-            createDate: '2018-02-15',
-            status: '待受理',
-            supplier: 'fs',
-            logisticsStatus: '深圳发货',
-            money: '10000',
-            remark: '备注'
-          }
+          // {
+          //   fusenOrder: '',
+          //   createDate: '',
+          //   status: '',
+          //   supplier: '',
+          //   logisticsStatus: '',
+          //   money: '',
+          //   remark: ''
+          // }
         ],
         currentRow: null,
         showOrderDetail: false,
         orderDtailData: [
           {
-            productName: '二极管',
-            model: 'KV1221',
-            brand: '雄光',
-            unit: '个',
-            amount: 1000,
-            recQty: 1000,
-            declareQty: 0,
-            deliveryQty: 1000,
-            origin: '上海'
+            productName: '',
+            model: '',
+            brand: '',
+            unit: '',
+            amount: '',
+            recQty: '',
+            declareQty: '',
+            deliveryQty: '',
+            origin: ''
           }
         ],
         pickerOptions2: {
@@ -229,15 +229,18 @@
       onSelect() {
         // 订单查询
         req.post('/order/query', {
+          'pageSize': 0,
+          'pageCount': 20,
           'clientId': '00087895-0000-0000-0000-0000AF0A35D3',
-          'businessType': '1'
+          'businessType': '1',
+          'gatherSelcondition': 'FA170708644'
         }).then((res) => {
           this.$message({
             showClose: true,
             message: '查询成功',
             type: 'success'
           })
-          this.orderListData = res.orderLst
+          this.orderListData = res.orderLst.list
         })
       },
       handleCurrentChange(val) {
@@ -251,6 +254,7 @@
         this.hiddenState = true
       },
       parseDate(time) {
+        if (!time) { return }
         let res = time.split('.')[0].replace(/t/ig, ' ')
         return res
       },
