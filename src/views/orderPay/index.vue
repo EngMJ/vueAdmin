@@ -2,7 +2,16 @@
   <div class="view-main">
     <el-row class="content-wrapper">
       <el-col class="orderState-wrapper">
-        <div class="orderNumber">订单编号: 893289574924</div>
+        <div class="orderNumber">
+          <el-select v-model="formData.fusenOrder" placeholder="请选择" class="inputBox">
+            <el-option
+              v-for="(item,i) in orderNumberOptions"
+              :key="i"
+              :label="item.orderNumber"
+              :value="item.orderNumber">
+            </el-option>
+          </el-select>
+        </div>
         <div class="tagContent">
           <div v-for="(item,i) in tagData" :key="i" class="tagItem" :class="{active:item==='下单'}">
             {{item}}
@@ -16,33 +25,33 @@
                  size="small"
                  class="form-content">
           <el-form-item label="供应商" class="formItem">
-            <el-select v-model="formData.companyValue" placeholder="请选择" class="inputBox">
+            <el-select v-model="formData.supplier" placeholder="请选择" class="inputBox">
               <el-option
-                v-for="item in supplierOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                v-for="(item,i) in supplierOptions"
+                :key="item.customId?item.customId:i"
+                :label="item.name"
+                :value="item.name">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="币种类型" class="formItem">
-            <el-select v-model="formData.selectValue" placeholder="请选择" class="inputBox">
+            <el-select v-model="formData.currency" placeholder="请选择" class="inputBox">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                v-for="(item,i) in currencyOptions"
+                :key="i"
+                :label="item.orderCurrency"
+                :value="item.orderCurrency">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否垫资" class="formItem">
-            <el-radio-group v-model="formData.radio">
+            <el-radio-group v-model="formData.settleType">
               <el-radio :label="1">垫资</el-radio>
               <el-radio :label="2">不垫资</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="我的订单号" class="formItem">
-            <el-input v-model="formData.input"
+            <el-input v-model="formData.myOrderNo"
                       class="inputBox"
                       placeholder="请输入采购订单号"></el-input>
           </el-form-item>
@@ -53,7 +62,7 @@
           <div class="title">订单明细</div>
           <span class="handleButton">
             <el-button type="primary" size="small">批量增加</el-button>
-            <el-button size="small">新增</el-button>
+            <el-button size="small" @click="tableData.push({})">新增</el-button>
           </span>
         </div>
         <el-table
@@ -71,50 +80,69 @@
             width="60">
           </el-table-column>
           <el-table-column
-            property="sellName"
             align="center"
             label="品名">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.sellName" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
-            property="modelNumber"
             align="center"
             label="型号">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.modelNumber" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
-            property="unit"
             align="center"
             label="单位">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.unit" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
             property="unitPrice"
             align="center"
             label="单价">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.unitPrice" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
             property="Number"
             align="center"
             label="数量">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.Number" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
             property="totalPrice"
             align="center"
             label="金额">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.totalPrice" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
-            property="brand"
             align="center"
             label="品牌">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.brand" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
-            property="productionAddress"
             align="center"
             label="产地">
+            <template slot-scope="prop">
+              <el-input type="text" v-model="prop.row.productionAddress" class="formInnerInput"></el-input>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="操作">
             <template slot-scope="prop">
-              <el-button type="danger" size="mini">删除</el-button>
+              <el-button type="danger" size="mini" @click="deleteTableItem(prop)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -151,6 +179,7 @@
 
 <script>
   import bottomTab from '@/components/bottomFeedbackTab'
+  import req from '@/utils/req'
   export default {
     data() {
       return {
@@ -164,58 +193,25 @@
             totalPrice: 20000,
             brand: '飞利浦',
             productionAddress: '深圳'
-          },
-          {
-            sellName: 'LED灯',
-            modelNumber: 'SR',
-            unit: '个',
-            unitPrice: 10,
-            Number: 1000,
-            totalPrice: 10000,
-            brand: '飞利浦',
-            productionAddress: '深圳'
-          },
-          {
-            sellName: 'LED灯',
-            modelNumber: 'SR',
-            unit: '个',
-            unitPrice: 10,
-            Number: 1200,
-            totalPrice: 12000,
-            brand: '飞利浦',
-            productionAddress: '深圳'
           }
         ],
-        options: [
+        currencyOptions: [
           {
-            value: '选项1',
-            label: 'RMB'
-          },
-          {
-            value: '选项2',
-            label: 'USD'
+            orderCurrency: 'RMB'
           }
         ],
         supplierOptions: [
           {
-            value: '选项1',
-            label: '深圳市大创科技有限公司'
-          },
-          {
-            value: '选项2',
-            label: '深圳市腾讯科技有限公司'
-          },
-          {
-            value: '选项3',
-            label: '深圳市顺丰科技有限公司'
+            name: '深圳市大创科技有限公司'
           }
         ],
         formData: {
-          supplier: '',
-          input: '',
-          companyValue: '',
-          selectValue: '',
-          radio: 1
+          supplier: '', // 供应商
+          currency: '', // 币种
+          settleType: 1, // 垫资选项
+          customOrder: 'WTF000001', // 海关订单
+          fusenOrder: '', // 富森订单
+          myOrderNo: '' // 输入的我的订单号
         },
         fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
         tagData: [
@@ -227,8 +223,64 @@
           '已报关',
           '已发货',
           '已签收'
-        ]
+        ],
+        orderNumberOptions: []
       }
+    },
+    created() {
+      // 获取供应商信息
+      req.get('/baseinfo/supplier', {
+        params: {
+          customId: '00087895-0000-0000-0000-0000AF0A35D3',
+          businessCode: '1'
+        }
+      }).then((res) => {
+        this.supplierOptions = res.supplierLst
+      })
+      // 获取币种信息
+      req.get('/baseinfo/currency', {
+        params: {
+          customId: '00087895-0000-0000-0000-0000AF0A35D3',
+          businessCode: '1'
+        }
+      }).then((res) => {
+        this.currencyOptions = res.currencyLst
+      })
+      // 垫资信息
+      req.get('/baseinfo/loaning', {
+        params: {
+          customId: '00087895-0000-0000-0000-0000AF0A35D3',
+          businessCode: '1'
+        }
+      }).then((res) => {
+        // todo 根据结果决定是否不显示垫资信息
+        console.log('垫资信息', res)
+      })
+      // 获取默认订单号
+      req.get('/baseinfo/dedaulttakeno', {
+        params: {
+          businessCode: '1'
+        }
+      }).then((res) => {
+        let item = res.takeNoLst[0] ? res.takeNoLst[0].orderNumber : ''
+        if (item) {
+          this.formData.fusenOrder = item
+          this.orderNumberOptions.unshift(res.takeNoLst[0])
+        }
+      })
+      // 可选订单号
+      req.get('/baseinfo/takeno', {
+        params: {
+          customId: '88DD0233-2623-4F6C-9894-9D2B3CF85B82'
+        }
+      }).then((res) => {
+        this.orderNumberOptions = this.orderNumberOptions.concat(res.takeNoLst)
+      })
+      // todo 9982端口
+      // 上传文件
+      // 删除文件
+      // 文件上传列表
+      // todo 修改订单为可输入
     },
     methods: {
       handleRemove(file, fileList) {
@@ -250,11 +302,53 @@
           type: 'success'
         })
       },
-      submitHandle() {
+      submitHandle() { // 提交数据
+        let saveData = this.formData
+        saveData.lst = this.tableData
+        console.log(saveData)
+        // todo 接口有问题 保存请求
+        // this.$http.post('http://203.86.26.27:9983/api/order/save', {
+        //   'supplier': 'SILICON APPLICATION CORP',
+        //   'currency': 'USD',
+        //   'settleType': 1,
+        //   'customOrder': 'WTF000001',
+        //   'fusenOrder': 'FA180500097',
+        //   'lst': [
+        //     {
+        //       'productName': '笔记本电脑',
+        //       'moedel': '精盾K480NDZ',
+        //       'unit': '个',
+        //       'unitPrice': 403.180000,
+        //       'amount': 1200,
+        //       'brand': 'Hasee',
+        //       'origin': '中国'
+        //     }
+        //   ]
+        // }).then((res) => {
+        //   console.log('保存', res)
+        // })
         this.$notify({
           title: '提交成功',
           message: '该订单已提交',
           type: 'success'
+        })
+      },
+      deleteTableItem(res) {
+        this.$confirm('确实要删除该条目?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.tableData.splice(res.$index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
       }
     },

@@ -2,11 +2,14 @@
  * Created by jiachenpan on 16/11/18.
  */
 
-export function parseTime(time, cFormat) {
+export function parseTime(time, cFormat, type = 0) {
   if (arguments.length === 0) {
     return null
   }
-  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+  let format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+  if (type === 4) {
+    format = '{y}-{m}-{d}'
+  }
   let date
   if (typeof time === 'object') {
     date = time

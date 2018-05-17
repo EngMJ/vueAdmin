@@ -30,7 +30,7 @@
       </div>
       <el-table
         ref="singleTable"
-        :data="tableData"
+        :data="orderListData"
         @current-change="handleCurrentChange"
         class="tableContent"
         header-row-class-name="tabHead"
@@ -51,22 +51,25 @@
           label="采购单号">
           <template slot-scope="prop">
             <div @click="showOrderDetail=!showOrderDetail" class="highText">
-              {{prop.row.sellNumber}}
+              {{prop.row.fusenOrder}}
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          property="date"
           align="center"
+          width="95px"
           label="订单日期">
+          <template slot-scope="prop">
+            {{parseDate(prop.row.createDate)}}
+          </template>
         </el-table-column>
         <el-table-column
-          property="orderState"
+          property="status"
           align="center"
           label="订单状态">
         </el-table-column>
         <el-table-column
-          property="company"
+          property="supplier"
           align="center"
           label="供应商">
         </el-table-column>
@@ -75,12 +78,12 @@
           label="物流状态">
           <template slot-scope="prop">
             <div class="highText" @click="$router.push({path:'/logistics/index',query:{key:123}})">
-              {{prop.row.logisticsState}}
+              {{prop.row.logisticsStatus}}
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          property="totalPrice"
+          property="money"
           align="center"
           label="订单金额">
         </el-table-column>
@@ -100,8 +103,12 @@
           width="200px"
           label="订单确认">
           <template slot-scope="prop">
-            <div v-if="showUploadSuccess" class="highText confirmation">
-              <a href="#" download="模板" :class="{hidden:false}">订单确认书模板</a>
+            <div v-if="prop.row.isConfirmed" class="highText confirmation">
+              <a href="#"
+                 download="模板"
+                 :class="{hidden:false}">
+                订单确认书模板
+              </a>
               <el-upload action="https://jsonplaceholder.typicode.com/posts/"
                          style="display: inline-block;margin-left: 5px"
                          :on-success="showSuccess">
@@ -128,17 +135,17 @@
         </el-table-column>
       </el-table>
       <el-dialog title="产品明细" :visible.sync="showOrderDetail">
-        <el-table :data="gridData" :border="true" style="width:100%">
+        <el-table :data="orderDtailData" :border="true" style="width:100%">
           <el-table-column type="index" label="序号" width="60"></el-table-column>
-          <el-table-column property="sellName" label="品名"></el-table-column>
-          <el-table-column property="modelNumber" label="型号"></el-table-column>
+          <el-table-column property="productName" label="品名"></el-table-column>
+          <el-table-column property="model" label="型号"></el-table-column>
           <el-table-column property="brand" label="品牌"></el-table-column>
           <el-table-column property="unit" label="单位"></el-table-column>
-          <el-table-column property="orderNumber" label="订单数量"></el-table-column>
-          <el-table-column property="consigneeNumber" label="报关数量"></el-table-column>
-          <el-table-column property="reprotNumber" label="发货数量"></el-table-column>
-          <el-table-column property="consignerNumber" label="收货数量"></el-table-column>
-          <el-table-column property="productionAddress" label="产地"></el-table-column>
+          <el-table-column property="amount" label="订单数量"></el-table-column>
+          <el-table-column property="declareQty" label="报关数量"></el-table-column>
+          <el-table-column property="deliveryQty" label="发货数量"></el-table-column>
+          <el-table-column property="recQty" label="收货数量"></el-table-column>
+          <el-table-column property="origin" label="产地"></el-table-column>
         </el-table>
       </el-dialog>
       <bottomTab></bottomTab>
@@ -147,6 +154,7 @@
 
 <script>
   import bottomTab from '@/components/bottomFeedbackTab'
+
   export default {
     data() {
       return {
@@ -154,53 +162,30 @@
           user: '',
           region: ''
         },
-        tableData: [
+        orderListData: [
           {
-            sellNumber: 987666,
-            date: '2018-02-15',
-            orderState: '待受理',
-            company: '深圳市腾讯有限公司',
-            logisticsState: '深圳发货',
-            totalPrice: '10000 USD',
-            remark: '',
-            orderAffirm: '订单确认书.doc'
+            fusenOrder: 987666,
+            createDate: '2018-02-15',
+            status: '待受理',
+            supplier: 'fs',
+            logisticsStatus: '深圳发货',
+            money: '10000',
+            remark: '备注'
           }
         ],
         currentRow: null,
         showOrderDetail: false,
-        gridData: [
+        orderDtailData: [
           {
-            sellName: '二极管',
-            modelNumber: 'KV1221',
+            productName: '二极管',
+            model: 'KV1221',
             brand: '雄光',
             unit: '个',
-            orderNumber: 1000,
-            consigneeNumber: 1000,
-            reprotNumber: 0,
-            consignerNumber: 1000,
-            productionAddress: '上海'
-          },
-          {
-            sellName: '二极管',
-            modelNumber: 'KV1221',
-            brand: '雄光',
-            unit: '个',
-            orderNumber: 1000,
-            consigneeNumber: 1000,
-            reprotNumber: 0,
-            consignerNumber: 1000,
-            productionAddress: '上海'
-          },
-          {
-            sellName: '二极管',
-            modelNumber: 'KV1221',
-            brand: '雄光',
-            unit: '个',
-            orderNumber: 1000,
-            consigneeNumber: 1000,
-            reprotNumber: 0,
-            consignerNumber: 1000,
-            productionAddress: '上海'
+            amount: 1000,
+            recQty: 1000,
+            declareQty: 0,
+            deliveryQty: 1000,
+            origin: '上海'
           }
         ],
         pickerOptions2: {
@@ -253,29 +238,77 @@
       },
       hiddenHandle() {
         this.hiddenState = true
+      },
+      parseDate(time) {
+        let res = time.split('.')[0].replace(/t/ig, ' ')
+        return res
       }
     },
     components: {
       bottomTab
     },
     created() {
-      this.$http({
-        url: '/mock/orderSearch',
-        method: 'post',
-        data: {
-          key: '我的mock数据'
+      // 登录时,存储客户ID
+      // 查询时时.传递客户ID与贸易类型
+      // 订单查询
+      this.$http.post('http://203.86.26.27:9983/api/order/query', {
+        'clientId': '00087895-0000-0000-0000-0000AF0A35D3',
+        'businessType': '1'
+      }).then((result) => {
+        if (result.status !== 200) {
+          return
         }
-      }).then((res) => {
-        console.log(res)
-      })
-      this.$http.get('/mock/getData', {
-        params: {
-          key: 123,
-          key1: 232
+        let res = result.data
+        if (res.result === 'success') {
+          this.$message({
+            showClose: true,
+            message: '查询成功',
+            type: 'success'
+          })
+          this.orderListData = res.orderLst
+        } else if (res.result === 'fail') {
+          this.$message('未找到该订单!')
+        } else {
+          this.$message({
+            showClose: true,
+            message: '网络故障加载失败,请重试!',
+            type: 'error'
+          })
         }
-      }).then((res) => {
-        console.log(res)
       })
+      // 点击订单号,查询明细
+      // this.$http.get('http://203.86.26.27:9983/api/order/querygoods', {
+      //   params: {
+      //     orderId: '0007BC61-0000-0000-0000-0000B06AC6E4'
+      //   }
+      // }).then((result) => {
+      //   console.log('获取详情', result)
+      //   if (result.status !== 200) {
+      //     this.$message({
+      //       showClose: true,
+      //       message: '网络故障加载失败,请重试!',
+      //       type: 'error'
+      //     })
+      //     return
+      //   }
+      //   let res = result.data
+      //   if (res.result === 'success') {
+      //     this.$message({
+      //       showClose: true,
+      //       message: '查询成功',
+      //       type: 'success'
+      //     })
+      //     this.orderDtailData = res.goodsLst
+      //   } else if (res.result === 'fail') {
+      //     this.$message('未找到该订单!')
+      //   } else {
+      //     this.$message({
+      //       showClose: true,
+      //       message: '网络故障加载失败,请重试!',
+      //       type: 'error'
+      //     })
+      //   }
+      // })
     }
   }
 </script>
