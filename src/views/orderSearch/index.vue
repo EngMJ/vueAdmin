@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item>
           <el-input class="orderInput" placeholder="请输入订单号"></el-input>
-          <el-button class="searchButton" type="primary" @click="onSubmit">查询</el-button>
+          <el-button class="searchButton" type="primary" @click="onSelect">查询</el-button>
           <el-button class="moreButton">更多查询</el-button>
         </el-form-item>
       </el-form>
@@ -50,7 +50,7 @@
           align="center"
           label="采购单号">
           <template slot-scope="prop">
-            <div @click="showOrderDetail=!showOrderDetail" class="highText">
+            <div @click="showDetail" class="highText">
               {{prop.row.fusenOrder}}
             </div>
           </template>
@@ -154,7 +154,7 @@
 
 <script>
   import bottomTab from '@/components/bottomFeedbackTab'
-
+  import req from '@/utils/req'
   export default {
     data() {
       return {
@@ -226,8 +226,19 @@
       }
     },
     methods: {
-      onSubmit() {
-        console.log('submit!')
+      onSelect() {
+        // 订单查询
+        req.post('/order/query', {
+          'clientId': '00087895-0000-0000-0000-0000AF0A35D3',
+          'businessType': '1'
+        }).then((res) => {
+          this.$message({
+            showClose: true,
+            message: '查询成功',
+            type: 'success'
+          })
+          this.orderListData = res.orderLst
+        })
       },
       handleCurrentChange(val) {
         this.currentRow = val
@@ -242,73 +253,23 @@
       parseDate(time) {
         let res = time.split('.')[0].replace(/t/ig, ' ')
         return res
+      },
+      showDetail(orderNum) {
+        this.showOrderDetail = !this.showOrderDetail
+        // 点击订单号,查询明细
+        req.get('/order/querygoods', {
+          params: {
+            orderId: '0007BC61-0000-0000-0000-0000B06AC6E4'
+          }
+        }).then((res) => {
+          this.orderDtailData = res.goodsLst
+        })
       }
     },
     components: {
       bottomTab
     },
     created() {
-      // 登录时,存储客户ID
-      // 查询时时.传递客户ID与贸易类型
-      // 订单查询
-      this.$http.post('http://203.86.26.27:9983/api/order/query', {
-        'clientId': '00087895-0000-0000-0000-0000AF0A35D3',
-        'businessType': '1'
-      }).then((result) => {
-        if (result.status !== 200) {
-          return
-        }
-        let res = result.data
-        if (res.result === 'success') {
-          this.$message({
-            showClose: true,
-            message: '查询成功',
-            type: 'success'
-          })
-          this.orderListData = res.orderLst
-        } else if (res.result === 'fail') {
-          this.$message('未找到该订单!')
-        } else {
-          this.$message({
-            showClose: true,
-            message: '网络故障加载失败,请重试!',
-            type: 'error'
-          })
-        }
-      })
-      // 点击订单号,查询明细
-      // this.$http.get('http://203.86.26.27:9983/api/order/querygoods', {
-      //   params: {
-      //     orderId: '0007BC61-0000-0000-0000-0000B06AC6E4'
-      //   }
-      // }).then((result) => {
-      //   console.log('获取详情', result)
-      //   if (result.status !== 200) {
-      //     this.$message({
-      //       showClose: true,
-      //       message: '网络故障加载失败,请重试!',
-      //       type: 'error'
-      //     })
-      //     return
-      //   }
-      //   let res = result.data
-      //   if (res.result === 'success') {
-      //     this.$message({
-      //       showClose: true,
-      //       message: '查询成功',
-      //       type: 'success'
-      //     })
-      //     this.orderDtailData = res.goodsLst
-      //   } else if (res.result === 'fail') {
-      //     this.$message('未找到该订单!')
-      //   } else {
-      //     this.$message({
-      //       showClose: true,
-      //       message: '网络故障加载失败,请重试!',
-      //       type: 'error'
-      //     })
-      //   }
-      // })
     }
   }
 </script>
