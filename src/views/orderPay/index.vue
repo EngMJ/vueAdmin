@@ -83,14 +83,14 @@
             align="center"
             label="品名">
             <template slot-scope="prop">
-              <el-input type="text" v-model="prop.row.sellName" class="formInnerInput"></el-input>
+              <el-input type="text" v-model="prop.row.productName" class="formInnerInput"></el-input>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="型号">
             <template slot-scope="prop">
-              <el-input type="text" v-model="prop.row.modelNumber" class="formInnerInput"></el-input>
+              <el-input type="text" v-model="prop.row.moedel" class="formInnerInput"></el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -109,11 +109,11 @@
             </template>
           </el-table-column>
           <el-table-column
-            property="Number"
+            property="amount"
             align="center"
             label="数量">
             <template slot-scope="prop">
-              <el-input type="text" v-model="prop.row.Number" class="formInnerInput"></el-input>
+              <el-input type="text" v-model="prop.row.amount" class="formInnerInput"></el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -121,7 +121,7 @@
             align="center"
             label="金额">
             <template slot-scope="prop">
-              <el-input type="text" v-model="prop.row.totalPrice" class="formInnerInput"></el-input>
+              {{prop.row.totalPrice = prop.row.amount * prop.row.unitPrice}}
             </template>
           </el-table-column>
           <el-table-column
@@ -135,7 +135,7 @@
             align="center"
             label="产地">
             <template slot-scope="prop">
-              <el-input type="text" v-model="prop.row.productionAddress" class="formInnerInput"></el-input>
+              <el-input type="text" v-model="prop.row.origin" class="formInnerInput"></el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -185,14 +185,13 @@
       return {
         tableData: [
           {
-            sellName: 'LED灯',
-            modelNumber: 'SR',
+            productName: 'LED灯',
+            moedel: 'SR',
             unit: '个',
             unitPrice: 20,
-            Number: 2000,
-            totalPrice: 20000,
+            amount: 2000,
             brand: '飞利浦',
-            productionAddress: '深圳'
+            origin: '深圳'
           }
         ],
         currencyOptions: [
@@ -305,32 +304,30 @@
       submitHandle() { // 提交数据
         let saveData = this.formData
         saveData.lst = this.tableData
-        console.log(saveData)
-        // todo 接口有问题 保存请求
-        // this.$http.post('http://203.86.26.27:9983/api/order/save', {
-        //   'supplier': 'SILICON APPLICATION CORP',
-        //   'currency': 'USD',
-        //   'settleType': 1,
-        //   'customOrder': 'WTF000001',
-        //   'fusenOrder': 'FA180500097',
-        //   'lst': [
-        //     {
-        //       'productName': '笔记本电脑',
-        //       'moedel': '精盾K480NDZ',
-        //       'unit': '个',
-        //       'unitPrice': 403.180000,
-        //       'amount': 1200,
-        //       'brand': 'Hasee',
-        //       'origin': '中国'
-        //     }
-        //   ]
-        // }).then((res) => {
-        //   console.log('保存', res)
-        // })
-        this.$notify({
-          title: '提交成功',
-          message: '该订单已提交',
-          type: 'success'
+        // todo 接口有问题 保存请求待完善
+        this.$http.post('http://203.86.26.27:9983/api/order/save', saveData).then((res) => {
+          console.log('保存', res)
+          if (res.status !== 200) {
+            this.$message({
+              message: '网络故障请重试!',
+              type: 'error'
+            })
+            return
+          }
+          let result = res.data
+          if (result.result === 'success') {
+            this.$notify({
+              title: '提交成功',
+              message: '该订单已提交',
+              type: 'success'
+            })
+          } else {
+            this.$notify({
+              title: '提交失败',
+              message: '订单提交失败请重试',
+              type: 'error'
+            })
+          }
         })
       },
       deleteTableItem(res) {
