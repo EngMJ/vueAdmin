@@ -2,16 +2,6 @@
   <div class="view-main">
     <el-row class="content-wrapper">
       <el-col class="orderState-wrapper">
-        <div class="orderNumber">
-          <el-select v-model="formData.fusenOrder" placeholder="请选择" class="inputBox">
-            <el-option
-              v-for="(item,i) in orderNumberOptions"
-              :key="i"
-              :label="item.orderNumber"
-              :value="item.orderNumber">
-            </el-option>
-          </el-select>
-        </div>
         <div class="tagContent">
           <div v-for="(item,i) in tagData" :key="i" class="tagItem" :class="{active:item==='下单'}">
             {{item}}
@@ -55,6 +45,16 @@
                       class="inputBox"
                       placeholder="请输入采购订单号"></el-input>
           </el-form-item>
+          <el-form-item label="订单编号" class="numberItem">
+            <el-select v-model="formData.fusenOrder" placeholder="请选择" class="inputBox">
+              <el-option
+                v-for="(item,i) in orderNumberOptions"
+                :key="i"
+                :label="item.orderNumber"
+                :value="item.orderNumber">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
       </el-col>
       <el-col class="tableView-wrapper">
@@ -70,7 +70,7 @@
           :border="true"
           show-summary
           sum-text="总计:"
-          highlight-current-row
+          class="orderTable"
           :row-style="{height:'30px'}"
           style="width: 100%;margin-top: 10px">
           <el-table-column
@@ -372,10 +372,6 @@
   padding-bottom: 0;
   font-size: 0;
   .orderState-wrapper{
-    .orderNumber{
-      float: right;
-      font-size: 15px;
-    }
     .tagContent{
       display: flex;
       justify-content: flex-start;
@@ -415,12 +411,21 @@
   .form-wrapper{
     margin-top: 20px;
     .form-content{
+      position: relative;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       margin-top: 20px;
       .formItem{
         flex: 0 0 40%;
+      }
+      .numberItem{
+        position: absolute;
+        right: 0;
+        top: -97px;
+        .inputBox{
+          width: 200px;
+        }
       }
     }
     .inputBox{
@@ -481,6 +486,23 @@
     td{
       &:not(:first-child){
         color:red;
+      }
+    }
+  }
+  /*table Item样式*/
+  .orderTable{
+    .el-table__row{
+      &>td{
+        padding: 0;
+      }
+    }
+    .formInnerInput{
+      &>.el-input__inner{
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        border: none;
+        border-radius: 0;
       }
     }
   }
