@@ -62,7 +62,7 @@
           <div class="title">订单明细</div>
           <span class="handleButton">
             <el-button type="primary" size="small">批量增加</el-button>
-            <el-button size="small" @click="tableData.push({})">新增</el-button>
+            <el-button size="small" @click="tableData.push({id: '011D6671-A95F-4285-BC4B-3CD32264CF9D'})">新增</el-button>
           </span>
         </div>
         <el-table
@@ -169,8 +169,8 @@
       </el-col>
       <el-col class="submit-wrapper">
         <el-button type="info" @click="$router.push('/orderSearch/index')">返回</el-button>
-        <el-button type="primary" @click="saveHandle">保存</el-button>
-        <el-button style="background: #42B983;color: #fff;" @click="submitHandle">提交</el-button>
+        <el-button type="primary" @click="submitHandle(0)">保存</el-button>
+        <el-button style="background: #42B983;color: #fff;" @click="submitHandle(1)">提交</el-button>
       </el-col>
     </el-row>
     <bottomTab></bottomTab>
@@ -191,7 +191,8 @@
             unitPrice: 20,
             amount: 2000,
             brand: '飞利浦',
-            origin: '深圳'
+            origin: '深圳',
+            id: '011D6671-A95F-4285-BC4B-3CD32264CF9D'
           }
         ],
         currencyOptions: [
@@ -280,6 +281,8 @@
       // 删除文件
       // 文件上传列表
       // todo 修改订单为可输入
+      // 获取uuid
+      // this.$getid
     },
     methods: {
       handleRemove(file, fileList) {
@@ -301,12 +304,51 @@
           type: 'success'
         })
       },
-      submitHandle() { // 提交数据
+      submitHandle(status) { // 提交/保存数据
         let saveData = this.formData
-        saveData.lst = this.tableData
-        // todo 接口有问题 保存请求待完善
+        // saveData.status = status
+        // saveData.lst = this.tableData
+        // saveData.orderId = 'F2CAE078-3F73-413C-B5B2-34FE646B48FD'
+        // saveData.supplier = '5SILICON APPLICATION CORP.'
+        // saveData.file = [
+        //   {
+        //     'id': '000A6815-0000-0000-0000-00006D854EF7',
+        //     'fileName': 'QQ5截图20180504184811.png', 'fileType': 'png',
+        //     'fTypeName': '3',
+        //     'fileId': '5afbfce6ea1c9c7bd6a4def0'
+        //   }
+        // ]
+        // todo status为1及提交以后，不能再操作了
+        saveData = {
+          'orderId': 'F2CAE078-3F73-413C-B5B2-34FE646B48FD',
+          'supplier': '5SILICON APPLICATION CORP.',
+          'currency': 'USD',
+          'settleType': '1',
+          'customOrder': 'WTF000001',
+          'fusenOrder': 'FA180500011',
+          'status': '0',
+          'lst': [
+            {
+              'id': '011D6671-A95F-4285-BC4B-3CD32264CF9D',
+              'productName': '笔5记本电脑',
+              'model': '精盾K480NDZ',
+              'unit': '个',
+              'unitPrice': '403.180000',
+              'amount': '1200',
+              'brand': 'Hasee',
+              'origin': '中国'
+            }
+          ],
+          'file': [
+            {
+              'id': '000A6815-0000-0000-0000-00006D854EF7',
+              'fileName': 'QQ5截图20180504184811.png', 'fileType': 'png',
+              'fTypeName': '3',
+              'fileId': '5afbfce6ea1c9c7bd6a4def0'
+            }
+          ] }
+
         this.$http.post('http://203.86.26.27:9983/api/order/save', saveData).then((res) => {
-          console.log('保存', res)
           if (res.status !== 200) {
             this.$message({
               message: '网络故障请重试!',

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 Vue.prototype.$http = axios
+import { getID } from './utils/getUuid'
+Vue.prototype.$getid = getID
 
 import 'normalize.css/normalize.css'// A modern alternative to CSS resets
 
