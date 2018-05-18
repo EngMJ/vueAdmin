@@ -184,7 +184,7 @@
   import req from '@/utils/req'
   export default {
     data() {
-      let uuid = this.$getid()
+      let _this = this
       return {
         tableData: [
           {
@@ -195,7 +195,7 @@
             amount: '',
             brand: '',
             origin: '',
-            id: uuid
+            id: _this.$getid()
           }
         ],
         currencyOptions: [
@@ -209,14 +209,18 @@
           }
         ],
         formData: {
+          orderId: _this.$getid(),
           supplier: '', // 供应商
           currency: '', // 币种
           settleType: 1, // 垫资选项
           customOrder: 'WTF000001', // 海关订单
           fusenOrder: '', // 富森订单
-          myOrderNo: '' // 输入的我的订单号
+          myOrderNo: '', // 输入的我的订单号
+          file: []
         },
-        fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
+        fileList: [
+          // { name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' },
+        ],
         tagData: [
           '下单',
           '受理中',
@@ -279,18 +283,13 @@
       }).then((res) => {
         this.orderNumberOptions = this.orderNumberOptions.concat(res.takeNoLst)
       })
-      // todo 9982端口
-      // 上传文件
-      // 删除文件
-      // 文件上传列表
-      // todo 修改订单为可输入
-      // 获取uuid
-      // this.$getid
       // todo id是必填的，包括订单id/商品id/文件id，订单id和商品id客户端生成，保证唯一就可以了，fileid由文件服务生成返回
     },
     methods: {
-      handleRemove(file, fileList) {
-        console.log(file, fileList)
+      handleRemove(file) { // 删除对应显示文件
+        this.fileList = this.fileList.filter((item) => {
+          return item.name !== file.name
+        })
       },
       handlePreview(file) {
         console.log(file)
@@ -299,7 +298,21 @@
         this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
       },
       beforeRemove(file, fileList) {
-        return this.$confirm(`确定移除 ${file.name}？`)
+        return this.$confirm(`确实要删除${file.name}?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
       },
       saveHandle() {
         this.$notify({
@@ -313,16 +326,16 @@
         let saveData = this.formData
         saveData.status = status
         saveData.lst = this.tableData
-        saveData.orderId = this.$getid()
         saveData.supplier = '5SILICON APPLICATION CORP.'
-        saveData.file = [
-          {
-            'id': '000A6815-0000-0000-0000-00006D854EF7',
-            'fileName': 'QQ5截图20180504184811.png', 'fileType': 'png',
-            'fTypeName': '3',
-            'fileId': '5afbfce6ea1c9c7bd6a4def0'
-          }
-        ]
+        // saveData.file = [
+        //   {
+        //     'id': '000A6815-0000-0000-0000-00006D854EF7',
+        //     'fileName': 'QQ5截图20180504184811.png',
+        //     'fileType': 'png',
+        //     'fTypeName': '3',
+        //     'fileId': '5afbfce6ea1c9c7bd6a4def0'
+        //   }
+        // ]
 
         this.$http.post('http://203.86.26.27:9983/api/order/save', saveData).then((res) => {
           if (res.status !== 200) {
@@ -366,22 +379,55 @@
           })
         })
       },
-      upLoad(item) {
+      upLoad(item) { // 上传方法
+        // 处理item,获取文件名
         let formData = new FormData()
         formData.append('file', item.file)
         formData.append('name', '测试文本')
-        let uuid = this.$getid()
-        formData.append('orderId', uuid)
-        this.$http({
-          url: 'http://203.86.26.27:9982/file/upload',
-          method: 'post',
-          data: {
-            formData
+        let orderId = this.formData.orderId
+        formData.append('orderId', orderId)
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
           }
-        }).then((res) => {
-          console.log(res)
-        }).catch((err) => {
-          console.log(err)
+        }
+        this.$http.post('http://203.86.26.27:9982/file/upload', formData, config).then((result) => {
+          if (result.status !== 200) {
+            this.$message({
+              message: '网络故障请重试!',
+              type: 'warning'
+            })
+            return
+          }
+          // 上传完需要的字段,文件id,文件上传后下载地址,文件名,文件后缀,
+          let res = result.data
+          let fileName = item.file.name
+          let fileType = fileName.split('.')
+          fileType = fileType[fileType.length - 1]
+          let fileId = res.fileId
+          let fileDownloadUrl = 'http://10.1.1.42:9982/file/download/' + fileId
+          // 上传完文件,则重新修改查询文件列表,重新渲染页面
+          this.fileList.push(
+            {
+              name: fileName,
+              url: fileDownloadUrl
+            }
+          )
+          // 修改提交要提交表单数据中的file数组
+          let uuid = this.$getid()
+          // fileName 不能重复------------------
+          this.formData.file.push({
+            'id': uuid,
+            'fileName': fileName,
+            'fileType': fileType,
+            'fTypeName': fileType.length,
+            'fileId': fileId
+          })
+          // todo 删除操作还未完成可暂时不处理
+          // 修改显示文件lisit,并修改对应网址,进行删除操作
+          // 删除请求,删除对应form中的file数组内容
+          // todo 保存业务信息后,初次进入页面进行根据订单号查询文件列表
+          // 查询文件列表
         })
       }
     },
