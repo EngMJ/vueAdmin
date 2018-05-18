@@ -235,6 +235,7 @@
       }
     },
     created() {
+      // todo 测试文件下载有问题
       // 获取供应商信息
       req.get('/baseinfo/supplier', {
         params: {
@@ -297,7 +298,7 @@
       handleExceed(files, fileList) {
         this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
       },
-      beforeRemove(file, fileList) {
+      beforeRemove(file) {
         return this.$confirm(`确实要删除${file.name}?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
