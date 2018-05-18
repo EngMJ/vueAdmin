@@ -62,7 +62,7 @@
           <div class="title">订单明细</div>
           <span class="handleButton">
             <el-button type="primary" size="small">批量增加</el-button>
-            <el-button size="small" @click="tableData.push({id: '011D6671-A95F-4285-BC4B-3CD32264CF9D'})">新增</el-button>
+            <el-button size="small" @click="tableData.push({id: $getid()})">新增</el-button>
           </span>
         </div>
         <el-table
@@ -151,7 +151,9 @@
         <div class="title">附件上传</div>
         <el-upload
           class="upload-content"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="#"
+          accept=".xls,.xlsx,.txt,.doc,.docx,.pdf"
+          :httpRequest="upLoad"
           :on-preview="handlePreview"
           :on-remove="handleRemove"
           :before-remove="beforeRemove"
@@ -160,7 +162,7 @@
           :on-exceed="handleExceed"
           :file-list="fileList">
           <el-button size="small" type="primary">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">支持上传文件:表格(*.xls;*.xlsx) 文档(*.text,*.doc,*.docx,*.pdf)</div>
+          <div slot="tip" class="el-upload__tip">支持上传文件:表格(*.xls;*.xlsx) 文档(*.txt,*.doc,*.docx,*.pdf)</div>
         </el-upload>
         <div class="make-content">
           <span class="makeTime">制单时间: 2018-03-14 18:22:50</span>
@@ -170,7 +172,7 @@
       <el-col class="submit-wrapper">
         <el-button type="info" @click="$router.push('/orderSearch/index')">返回</el-button>
         <el-button type="primary" @click="submitHandle(0)">保存</el-button>
-        <el-button style="background: #42B983;color: #fff;" @click="submitHandle(1)">提交</el-button>
+        <el-button style="background: #42B983;color: #fff;" @click="submitHandle(0)">提交</el-button>
       </el-col>
     </el-row>
     <bottomTab></bottomTab>
@@ -182,17 +184,18 @@
   import req from '@/utils/req'
   export default {
     data() {
+      let uuid = this.$getid()
       return {
         tableData: [
           {
-            productName: 'LED灯',
-            moedel: 'SR',
-            unit: '个',
-            unitPrice: 20,
-            amount: 2000,
-            brand: '飞利浦',
-            origin: '深圳',
-            id: '011D6671-A95F-4285-BC4B-3CD32264CF9D'
+            productName: '',
+            moedel: '',
+            unit: '',
+            unitPrice: '',
+            amount: '',
+            brand: '',
+            origin: '',
+            id: uuid
           }
         ],
         currencyOptions: [
@@ -283,6 +286,7 @@
       // todo 修改订单为可输入
       // 获取uuid
       // this.$getid
+      // todo id是必填的，包括订单id/商品id/文件id，订单id和商品id客户端生成，保证唯一就可以了，fileid由文件服务生成返回
     },
     methods: {
       handleRemove(file, fileList) {
@@ -305,48 +309,20 @@
         })
       },
       submitHandle(status) { // 提交/保存数据
+        // status为1及提交以后，不能再操作了
         let saveData = this.formData
-        // saveData.status = status
-        // saveData.lst = this.tableData
-        // saveData.orderId = 'F2CAE078-3F73-413C-B5B2-34FE646B48FD'
-        // saveData.supplier = '5SILICON APPLICATION CORP.'
-        // saveData.file = [
-        //   {
-        //     'id': '000A6815-0000-0000-0000-00006D854EF7',
-        //     'fileName': 'QQ5截图20180504184811.png', 'fileType': 'png',
-        //     'fTypeName': '3',
-        //     'fileId': '5afbfce6ea1c9c7bd6a4def0'
-        //   }
-        // ]
-        // todo status为1及提交以后，不能再操作了
-        saveData = {
-          'orderId': 'F2CAE078-3F73-413C-B5B2-34FE646B48FD',
-          'supplier': '5SILICON APPLICATION CORP.',
-          'currency': 'USD',
-          'settleType': '1',
-          'customOrder': 'WTF000001',
-          'fusenOrder': 'FA180500011',
-          'status': '0',
-          'lst': [
-            {
-              'id': '011D6671-A95F-4285-BC4B-3CD32264CF9D',
-              'productName': '笔5记本电脑',
-              'model': '精盾K480NDZ',
-              'unit': '个',
-              'unitPrice': '403.180000',
-              'amount': '1200',
-              'brand': 'Hasee',
-              'origin': '中国'
-            }
-          ],
-          'file': [
-            {
-              'id': '000A6815-0000-0000-0000-00006D854EF7',
-              'fileName': 'QQ5截图20180504184811.png', 'fileType': 'png',
-              'fTypeName': '3',
-              'fileId': '5afbfce6ea1c9c7bd6a4def0'
-            }
-          ] }
+        saveData.status = status
+        saveData.lst = this.tableData
+        saveData.orderId = this.$getid()
+        saveData.supplier = '5SILICON APPLICATION CORP.'
+        saveData.file = [
+          {
+            'id': '000A6815-0000-0000-0000-00006D854EF7',
+            'fileName': 'QQ5截图20180504184811.png', 'fileType': 'png',
+            'fTypeName': '3',
+            'fileId': '5afbfce6ea1c9c7bd6a4def0'
+          }
+        ]
 
         this.$http.post('http://203.86.26.27:9983/api/order/save', saveData).then((res) => {
           if (res.status !== 200) {
@@ -388,6 +364,24 @@
             type: 'info',
             message: '已取消删除'
           })
+        })
+      },
+      upLoad(item) {
+        let formData = new FormData()
+        formData.append('file', item.file)
+        formData.append('name', '测试文本')
+        let uuid = this.$getid()
+        formData.append('orderId', uuid)
+        this.$http({
+          url: 'http://203.86.26.27:9982/file/upload',
+          method: 'post',
+          data: {
+            formData
+          }
+        }).then((res) => {
+          console.log(res)
+        }).catch((err) => {
+          console.log(err)
         })
       }
     },

@@ -17,7 +17,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-input class="orderInput" placeholder="请输入订单号"></el-input>
+          <el-input class="orderInput" v-model="gatherSelcondition" placeholder="请输入订单号"></el-input>
           <el-button class="searchButton" type="primary" @click="onSelect">查询</el-button>
           <el-button class="moreButton">更多查询</el-button>
         </el-form-item>
@@ -127,6 +127,7 @@
         </el-table-column>
         <el-table-column
           align="center"
+          width="150px"
           label="操作">
           <template slot-scope="prop">
             <el-button type="primary" size="small">查看</el-button>
@@ -222,18 +223,20 @@
         value7: '',
         radio: '1',
         showUploadSuccess: true,
-        hiddenState: false
+        hiddenState: false,
+        gatherSelcondition: 'FA170708644'
       }
     },
     methods: {
       onSelect() {
         // 订单查询
+        let gatherSelcondition = this.gatherSelcondition
         req.post('/order/query', {
           'pageSize': 0,
           'pageCount': 20,
           'clientId': '00087895-0000-0000-0000-0000AF0A35D3',
           'businessType': '1',
-          'gatherSelcondition': 'FA170708644'
+          'gatherSelcondition': gatherSelcondition
         }).then((res) => {
           this.$message({
             showClose: true,
